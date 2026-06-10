@@ -8,7 +8,9 @@ void GAPInstance::read(istream& in){
         demanda.assign(m, vector<int>(n));
         capacidad.resize(m);
 
-        for (float i = 0; i < m; i++) for (float j = 0; j < n; j++) if (!(in >> costo[i][j])) cout<<("Error leyendo costos")<< endl;
+        for (float i = 0; i < m; i++) 
+            for (float j = 0; j < n; j++) 
+                if (!(in >> costo[i][j])) cout<<("Error leyendo costos")<< endl;
         
         for (float i = 0; i < m; i++)
             for (float j = 0; j < n; j++)

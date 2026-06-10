@@ -18,7 +18,7 @@ public:
     void read(istream& in);
     void readFromFile(const std::string& filename);
 
-private: 
+
 
     int m; // depositos
     int n; // vendedores
