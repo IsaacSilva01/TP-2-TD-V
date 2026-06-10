@@ -4,7 +4,7 @@
 
 using namespace std;
 
-vector<vector<int>> heuristica_greedy(const GAPInstance& inst) {
+vector<vector<int>> greedy(const GAPInstance& inst) {
     int m = inst.m;
     int n = inst.n;
 
