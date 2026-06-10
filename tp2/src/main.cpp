@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     cout << "Reading file " << filename << endl;
 
     GAPInstance inst;
-    inst.readFromFile(argv[1]);
+    GAPInstance readFromFile(argv[1]);
 
     // Aca empieza la magia.
 

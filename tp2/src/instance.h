@@ -8,26 +8,28 @@ using namespace std;
 class GAPInstance {
 public:
    
-    int getm() { return m;}
-    int getn() { return n;}
-    float getcosto(int i, int j){return costo[i][j];}
-    float getdemanda(int i, int j){return demanda[i][j];}
-    float getcapacidad(int i){return capacidad[i];}
+   GAPInstance() : m(0), n(0) {}
 
+    // estos getters son para acceder a los datos desde las heurísticas
+    int getm() const { return m; }
+    int getn() const { return n; }
+    float getcosto(int i, int j) const { return costo[i][j]; }
+    float getdemanda(int i, int j) const { return demanda[i][j]; }
+    float getcapacidad(int i) const { return capacidad[i]; }
 
     void read(istream& in);
-    void readFromFile(const std::string& filename);
+    void readFromFile(const string& filename);
 
+private:
 
+    int m; // Número de depósitos
+    int n; // Número de vendedores
 
-    int m; // depositos
-    int n; // vendedores
-
-    vector<vector<float>> costo;     // cost[i][j]: costo de asignar job j al agente i
-    vector<vector<float>> demanda; // resource[i][j]: recurso consumido
-    vector<float> capacidad;              // capacity[i]: capacidad del agente i
-
-    GAPInstance() : m(0), n(0) {}
-
+    // costo[i][j]: costo de asignar el vendedor j al depósito i
+    vector<vector<float>> costo;     
+    // demanda[i][j]: recurso que consume el vendedor j en el depósito i
+    vector<vector<float>> demanda;   
+    // capacidad[i]: capacidad total del depósito i
+    vector<float> capacidad;
     
 };
