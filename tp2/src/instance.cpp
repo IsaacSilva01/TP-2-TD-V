@@ -29,7 +29,6 @@ void GAPInstance::read(istream& in){
             cout << "Error leyendo capacidad del deposito " << i << endl; 
         }
     }
-
 }  
 
 void GAPInstance::readFromFile(const string& filename) {

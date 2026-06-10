@@ -8,7 +8,7 @@ using namespace std;
 class GAPInstance {
 public:
    
-   GAPInstance() : m(0), n(0) {}
+    GAPInstance() : m(0), n(0) {} //constructor de la clase Instance
 
     // estos getters son para acceder a los datos desde las heurísticas
     int getm() const { return m; }
@@ -22,8 +22,8 @@ public:
 
 private:
 
-    int m; // Número de depósitos
-    int n; // Número de vendedores
+    int m; // número de depósitos
+    int n; // número de vendedores
 
     // costo[i][j]: costo de asignar el vendedor j al depósito i
     vector<vector<float>> costo;     
