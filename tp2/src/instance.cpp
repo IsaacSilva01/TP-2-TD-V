@@ -4,20 +4,13 @@ void GAPInstance::read(istream& in){
    if (!(in >> m >> n))
             cout<<("Error leyendo m y n")<< endl;
 
-        costo.assign(m, vector<float>(n));
-        demanda.assign(m, vector<float>(n));
+        costo.assign(m, vector<int>(n));
+        demanda.assign(m, vector<int>(n));
         capacidad.resize(m);
 
-<<<<<<< HEAD
         for (float i = 0; i < m; i++) 
             for (float j = 0; j < n; j++) 
                 if (!(in >> costo[i][j])) cout<<("Error leyendo costos")<< endl;
-=======
-        for (int i = 0; i < m; ++i)
-            for (int j = 0; j < n; ++j)
-                if (!(in >> costo[i][j]))
-                    cout<<("Error leyendo costos")<< endl;
->>>>>>> 359fdd279dae485cde4ec19a03a8580487a04cb5
         
         for (float i = 0; i < m; i++)
             for (float j = 0; j < n; j++)

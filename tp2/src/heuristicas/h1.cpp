@@ -19,7 +19,7 @@ vector<vector<int>> heuristica_greedy(const GAPInstance& inst) {
             if (inst.demanda[i][j] <= cap_restante[i]) { // me fijo si la demanda del vendedor entra en el deposito
                 if (inst.costo[i][j] < mejor_costo) { // comparo el mejor costo guardado con el de ahora
                     mejor_costo = inst.costo[i][j]; // si es mejor lo guardo
-                    mejor_dep = i; // y me guardo el numero de deposito
+                    mejor_agente = i; // y me guardo el numero de deposito
                 }
             }
         }
