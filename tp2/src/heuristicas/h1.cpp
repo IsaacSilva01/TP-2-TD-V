@@ -1,4 +1,5 @@
 #include "instance.h"
+#include "solucion.h"
 #include <vector>
 #include <limits>
 
@@ -11,8 +12,8 @@ vector<vector<int>> greedy(const GAPInstance& inst) {
     int n = inst.getn();
 
     // creo una copia de las capacidades de los vectores para poder ir restando después
-    vector<float> cap_restante = {}; 
-    for(int i; i < m; i++) {
+    vector<float> cap_restante(m);
+    for(int i = 0; i < m; i++) {
         cap_restante[i] = inst.getcapacidad(i);
     }
 

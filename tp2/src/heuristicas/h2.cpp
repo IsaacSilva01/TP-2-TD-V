@@ -50,7 +50,7 @@ vector<vector<int>> ratio(const GAPInstance& inst) {
             }
         }
 
-        if (mejor_dep == -1) { // no encontre deposito factible
+        if (mejor_dep == -1) { // si no encontré depósito factible, pongo al vendedor en el depósito ficticio
             asignacion[m].push_back(j);
         } else {
             asignacion[mejor_dep].push_back(j); // asigno vendedor
