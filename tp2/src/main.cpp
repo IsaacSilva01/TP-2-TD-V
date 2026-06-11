@@ -16,13 +16,13 @@ int main(int argc, char** argv) {
 
     cout << "Leyendo archivo de instancia: " << input_file << endl;
     GAPInstance inst;
-    // Instanciamos la clase y leemos los datos
+    // instanciamos la clase y leemos los datos
     inst.readFromFile(input_file);
 
     cout << "Instancia cargada con exito!" << endl;
     cout << "Cantidad de depositos (m): " << inst.getm() << endl;
     cout << "Cantidad de vendedores (n): " << inst.getn() << endl;
-    // Próximo paso: pasarle 'inst' a tus funciones de heurísticas, por ejemplo:
+    // próximo paso: pasarle 'inst' a tus funciones de heurísticas, por ejemplo:
 
     // GAPSolution sol = heuristica_constructiva_1(inst);
     return 0;
