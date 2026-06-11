@@ -4,12 +4,19 @@
 
 using namespace std;
 
+// puse los gets para resolver el error del private
+// y copie las capacidades usando el get en un for
 vector<vector<int>> ratio(const GAPInstance& inst) {
 
-    int m = inst.m;
-    int n = inst.n;
+    int m = inst.getm();
+    int n = inst.getn();
 
-    vector<float> cap_restante(inst.capacidad); // copia de capacidades para ir actualizando
+    // creo una copia de las capacidades de los vectores para poder ir restando despues
+    vector<float> cap_restante = {}; 
+    for(int i; i < m; i++) {
+        cap_restante[i] = inst.getcapacidad(i);
+    }    
+
     vector<vector<int>> asignacion(m + 1);      // ultima posicion = vendedores no asignados
 
     for (int j = 0; j < n; j++) { // para cada vendedor
@@ -21,10 +28,10 @@ vector<vector<int>> ratio(const GAPInstance& inst) {
 
             float ratio;
 
-            if (inst.demanda[i][j] == 0) {
-                ratio = inst.costo[i][j];
+            if (inst.getdemanda(i,j) == 0) {
+                ratio = inst.getcosto(i, j);
             } else {
-                ratio = inst.costo[i][j] / inst.demanda[i][j];
+                ratio = inst.getcosto(i, j) / inst.getdemanda(i, j);
             }
 
             ratios.push_back({ratio, i});
@@ -40,7 +47,7 @@ vector<vector<int>> ratio(const GAPInstance& inst) {
 
             int dep = ratios[k].second;
 
-            if (inst.demanda[dep][j] <= cap_restante[dep]) {
+            if (inst.getdemanda(dep, j) <= cap_restante[dep]) {
                 mejor_dep = dep;
                 break;
             }
@@ -50,7 +57,7 @@ vector<vector<int>> ratio(const GAPInstance& inst) {
             asignacion[m].push_back(j);
         } else {
             asignacion[mejor_dep].push_back(j); // asigno vendedor
-            cap_restante[mejor_dep] -= inst.demanda[mejor_dep][j]; // actualizo capacidad
+            cap_restante[mejor_dep] -= inst.getdemanda(mejor_dep, j); // actualizo capacidad
         }
     }
 
