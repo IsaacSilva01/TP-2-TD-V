@@ -10,7 +10,7 @@ vector<vector<int>> greedy(const GAPInstance& inst) {
     int m = inst.getm();
     int n = inst.getn();
 
-    // creo una copia de las capacidades de los vectores para poder ir restando despues
+    // creo una copia de las capacidades de los vectores para poder ir restando después
     vector<float> cap_restante = {}; 
     for(int i; i < m; i++) {
         cap_restante[i] = inst.getcapacidad(i);

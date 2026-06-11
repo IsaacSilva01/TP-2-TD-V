@@ -12,8 +12,11 @@ public:
     // estos getters son para acceder a los datos desde las heurísticas
     int getm() const { return m; }
     int getn() const { return n; }
+    // devuelvo el costo que tiene el vendedor j para ir al depósito i
     float getcosto(int i, int j) const { return costo[i][j]; }
+    // devuelvo la demanda del vendedor j para el depósito i
     float getdemanda(int i, int j) const { return demanda[i][j]; }
+    // devuelvo la capacidad del depósito i
     float getcapacidad(int i) const { return capacidad[i]; }
 
     void read(istream& in);

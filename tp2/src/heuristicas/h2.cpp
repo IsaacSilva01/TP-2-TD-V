@@ -11,7 +11,7 @@ vector<vector<int>> ratio(const GAPInstance& inst) {
     int m = inst.getm();
     int n = inst.getn();
 
-    // creo una copia de las capacidades de los vectores para poder ir restando despues
+    // creo una copia de las capacidades de los vectores para poder ir restando después
     vector<float> cap_restante = {}; 
     for(int i; i < m; i++) {
         cap_restante[i] = inst.getcapacidad(i);
@@ -27,7 +27,6 @@ vector<vector<int>> ratio(const GAPInstance& inst) {
         for (int i = 0; i < m; i++) {
 
             float ratio;
-
             if (inst.getdemanda(i,j) == 0) {
                 ratio = inst.getcosto(i, j);
             } else {
@@ -44,9 +43,7 @@ vector<vector<int>> ratio(const GAPInstance& inst) {
 
         // busco el primer deposito factible siguiendo el orden de ratios
         for (int k = 0; k < (int)ratios.size(); k++) {
-
             int dep = ratios[k].second;
-
             if (inst.getdemanda(dep, j) <= cap_restante[dep]) {
                 mejor_dep = dep;
                 break;
