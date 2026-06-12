@@ -5,40 +5,42 @@
 
 using namespace std;
 
-// puse los gets para resolver el error del private
-// y copie las capacidades usando el get en un for
-vector<vector<int>> greedy(const GAPInstance& inst) {
+GAPSolution greedy(const GAPInstance& inst) {
     int m = inst.getm();
     int n = inst.getn();
 
-    // creo una copia de las capacidades de los vectores para poder ir restando después
-    vector<float> cap_restante(m);
-    for(int i = 0; i < m; i++) {
-        cap_restante[i] = inst.getcapacidad(i);
-    }
+    // creamos el objeto solución usando su constructor en base a nuestra instancia
+    GAPSolution sol(inst); 
 
-    vector<vector<int>> asignacion(m + 1); // creo mi vector de respuestas y la ultima posicion es los vendedores que no pude asignar
-
+    // iteramos por cada vendedor
     for (int j = 0; j < n; j++) {
-        float mejor_costo = numeric_limits<float>::infinity(); // inicializo el mejor costo en inf
-        int mejor_dep = -1; // inicializo como deposito seleccionado a uno inexistente
+        float mejor_costo = numeric_limits<float>::infinity(); 
+        int mejor_dep = -1; 
 
-        for (int i = 0; i < m; i++) { //itero todos los depositos para el i-esimo vendedor
-            if (inst.getdemanda(i, j) <= cap_restante[i]) { // me fijo si la demanda del vendedor entra en el deposito
-                if (inst.getcosto(i, j) < mejor_costo) { // comparo el mejor costo guardado con el de ahora
-                    mejor_costo = inst.getcosto(i, j); // si es mejor lo guardo
-                    mejor_dep = i; // y me guardo el numero de deposito
+        // iteramos todos los depósitos para encontrar la opción más barata
+        for (int i = 0; i < m; i++) { 
+            
+            // verificamos si el vendedor entra en el depósito
+            if (sol.es_factible_asignar(j, i, inst)) { 
+                // si la distancia es menor a la mejor que teníamos, la guardamos
+                if (inst.getcosto(i, j) < mejor_costo) { 
+                    mejor_costo = inst.getcosto(i, j); 
+                    mejor_dep = i; 
                 }
             }
         }
 
-        if (mejor_dep == -1) { // si no entro en ningun deposito lo mando al fihnal del vector de respuesta
-            asignacion[m].push_back(j);
+        // asignamos deposito a vendedor
+        if (mejor_dep != -1) {
+            // si encontramos un depósito real factible para j, le asignamos al deposito mejor_dep,
+            // restamos la capacidad y sumamos el costo al costo total
+            sol.asignar(j, mejor_dep, inst);
         } else {
-            asignacion[mejor_dep].push_back(j);// sino lo pongo al final del vector guardado en la posicion del deposito
-            cap_restante[mejor_dep] = cap_restante[mejor_dep] - inst.getdemanda(mejor_dep, j); // le resto al deposito seleccionado la demanda del vendedor
+            // si no encontramos ningún depósito real, lo asignamos 
+            // al depósito ficticio (índice m). O sea que se quedará con valor -1
+            sol.asignar(j, m, inst);
         }
     }
 
-    return asignacion;
+    return sol;
 }
