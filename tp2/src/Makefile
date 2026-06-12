@@ -1,16 +1,19 @@
 CC = g++
-CFLAGS = -std=c++17
-SRC = main.cpp
-OBJ = $(SRC:.cpp=.o)
+CXXFLAGS = -std=c++17
+CPPFLAGS = -I.
+SRC := $(shell find . -type f -name '*.cpp' | sort)
+OBJ := $(patsubst %.cpp,build/%.o,$(SRC))
 EXEC = gap_simulator
 
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(CC) $(OBJ) -o $(EXEC)
+	$(CC) $(CXXFLAGS) $(OBJ) -o "$@"
 
-%.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+build/%.o: %.cpp
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CXXFLAGS) $(CPPFLAGS) -c "$<" -o "$@"
 
 clean:
-	rm -f $(OBJ) $(EXEC)
+	rm -rf build $(EXEC)
+	rm -f *.o */*.o */*/*.o

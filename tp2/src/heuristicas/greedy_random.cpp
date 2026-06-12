@@ -1,5 +1,6 @@
 #include "instance.h"
 #include "solucion.h"
+#include "heuristicas.h"
 #include <vector>
 #include <limits>
 #include <algorithm>
