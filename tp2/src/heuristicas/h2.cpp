@@ -1,62 +1,91 @@
 #include "instance.h"
+#include "solucion.h"
 #include <vector>
-#include <algorithm>
+#include <limits>
 
 using namespace std;
 
-// puse los gets para resolver el error del private
-// y copie las capacidades usando el get en un for
-vector<vector<int>> ratio(const GAPInstance& inst) {
+// Intuición: itero sobre los depósitos, y para cada depósito le asigno
+// la mayor cantidad de vendedores posibles tal que
+// esos vendedores tengan el menor costo posible
+// con la particularidad de que además se prioriza
+// a los vendedores que tienen pocos depósitos factibles
+// disponibles para ser asignados
 
+// ambas condiciones se ven reflejadas en la variable puntaje
+// A cada depósito, se asinan los vendedores de menor puntaje:
+// puntaje = costo ij + (1 +  1 / cantidad de depositos factibles(i))
+GAPSolution greedy_por_deposito(const GAPInstance& inst) {
     int m = inst.getm();
     int n = inst.getn();
 
-    // creo una copia de las capacidades de los vectores para poder ir restando después
-    vector<float> cap_restante = {}; 
-    for(int i; i < m; i++) {
-        cap_restante[i] = inst.getcapacidad(i);
-    }    
+    // creamos el objeto solución usando su constructor en base a nuestra instancia
+    GAPSolution solucion(inst);
 
-    vector<vector<int>> asignacion(m + 1);      // ultima posicion = vendedores no asignados
+    // vector donde marcamos los vendedores ya asignados
+    vector<bool> asignado(n, false);
 
-    for (int j = 0; j < n; j++) { // para cada vendedor
+    // cantidad de depósitos factibles para cada vendedor
+    vector<int> cantidad_depositos_factibles(n, 0);
 
-        vector<pair<float,int>> ratios;
+    for (int vendedor = 0; vendedor < n; vendedor++) {
+        int contador = 0;
 
-        // calculo el ratio costo/demanda para cada deposito
-        for (int i = 0; i < m; i++) {
-
-            float ratio;
-            if (inst.getdemanda(i,j) == 0) {
-                ratio = inst.getcosto(i, j);
-            } else {
-                ratio = inst.getcosto(i, j) / inst.getdemanda(i, j);
-            }
-
-            ratios.push_back({ratio, i});
-        }
-
-        // ordeno de menor ratio a mayor
-        sort(ratios.begin(), ratios.end());
-
-        int mejor_dep = -1; // deposito elegido
-
-        // busco el primer deposito factible siguiendo el orden de ratios
-        for (int k = 0; k < (int)ratios.size(); k++) {
-            int dep = ratios[k].second;
-            if (inst.getdemanda(dep, j) <= cap_restante[dep]) {
-                mejor_dep = dep;
-                break;
+        for (int deposito = 0; deposito < m; deposito++) {
+            if (solucion.es_factible_asignar(vendedor, deposito, inst)) {
+                contador++;
             }
         }
 
-        if (mejor_dep == -1) { // si no encontré depósito factible, pongo al vendedor en el depósito ficticio
-            asignacion[m].push_back(j);
-        } else {
-            asignacion[mejor_dep].push_back(j); // asigno vendedor
-            cap_restante[mejor_dep] -= inst.getdemanda(mejor_dep, j); // actualizo capacidad
+        // evitamos división por cero haciendo que todos los vendedores
+        // son asignables a al menos un depósito.
+        // Siempre es posible asignarlo a un déposito imaginario
+        // que representa no asignarlo a ninguno
+        cantidad_depositos_factibles[vendedor] = max(1, contador);
+    }
+
+    // iteramos por cada depósito:
+    // por cada depósito, le asigno la mayor cantidad de vendedores posibles
+    // tal que esos vendedores tengan el mayor puntaje entre los vendedore no asignados
+    for (int deposito = 0; deposito < m; deposito++) {
+
+        while (true) {
+
+            float mejor_puntaje = numeric_limits<float>::infinity();
+            int mejor_vendedor = -1;
+
+            for (int vendedor = 0; vendedor < n; vendedor++) {
+
+                if (asignado[vendedor]) continue;
+
+                // chequeo que se factible asignar el vendedor actual al depósito actual
+                if (!solucion.es_factible_asignar(vendedor, deposito, inst)) {
+                    continue;
+                }
+
+                float costo = inst.getcosto(deposito, vendedor);
+
+                float puntaje = costo * (1.0f + 1.0f / cantidad_depositos_factibles[vendedor]);
+
+                if (puntaje < mejor_puntaje) {
+                    mejor_puntaje = puntaje;
+                    mejor_vendedor = vendedor;
+                }
+            }
+
+            if (mejor_vendedor == -1) break;
+
+            solucion.asignar(mejor_vendedor, deposito, inst);
+            asignado[mejor_vendedor] = true;
         }
     }
 
-    return asignacion;
+    // vendedores no asignados → depósito ficticio
+    for (int vendedor = 0; vendedor < n; vendedor++) {
+        if (!asignado[vendedor]) {
+            solucion.asignar(vendedor, m, inst);
+        }
+    }
+
+    return solucion;
 }
