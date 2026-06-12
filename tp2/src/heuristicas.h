@@ -18,6 +18,6 @@ public:
     GAPheuristicas(const GAPSolution& inst);
 
     // métodos auxiliares
-    GAPSolution greedy(const GAPInstance& inst); 
+    GAPSolution greedy_por_vendedores(const GAPInstance& inst); 
     GAPSolution greedy_por_deposito(const GAPInstance& inst);
 };
