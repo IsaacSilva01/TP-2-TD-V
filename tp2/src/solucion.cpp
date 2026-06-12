@@ -50,3 +50,32 @@ void GAPSolution::relocate(int vendedor, int deposito, const GAPInstance& inst){
         }
     }
 }
+
+void GAPSolution::swap(int vendedor1, int vendedor2, const GAPInstance& inst) {
+    int dep1 = asignacion[vendedor1];
+    int dep2 = asignacion[vendedor2];
+
+    // libero ambos
+    if (dep1 != -1) {
+        capacidad_residual[dep1] += inst.getdemanda(dep1, vendedor1);
+        costo_total -= inst.getcosto(dep1, vendedor1);
+    }
+    if (dep2 != -1) {
+        capacidad_residual[dep2] += inst.getdemanda(dep2, vendedor2);
+        costo_total -= inst.getcosto(dep2, vendedor2);
+    }
+
+    // reasigno cruzado
+    asignacion[vendedor1] = dep2;
+    asignacion[vendedor2] = dep1;
+
+    if (dep2 != -1) {
+        capacidad_residual[dep2] -= inst.getdemanda(dep2, vendedor1);
+        costo_total += inst.getcosto(dep2, vendedor1);
+    }
+    if (dep1 != -1) {
+        capacidad_residual[dep1] -= inst.getdemanda(dep1, vendedor2);
+        costo_total += inst.getcosto(dep1, vendedor2);
+    }
+}
+

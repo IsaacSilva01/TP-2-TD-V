@@ -20,5 +20,6 @@ public:
     bool es_factible_asignar(int vendedor, int deposito, const GAPInstance& inst);
     void asignar(int vendedor, int deposito, const GAPInstance& inst);
     void relocate (int vendedor, int deposito, const GAPInstance& inst);
+    void swap(int vendedor1, int vendedor2, const GAPInstance& inst); 
 
 };
