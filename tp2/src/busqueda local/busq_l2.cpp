@@ -1,5 +1,6 @@
 #include "instance.h"
 #include "solucion.h"
+#include "busqueda_local.h"
 #include <vector>
 using namespace std;
 
