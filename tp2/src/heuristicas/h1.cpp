@@ -5,7 +5,7 @@
 
 using namespace std;
 
-GAPSolution greedy(const GAPInstance& inst) {
+GAPSolution greedy_por_vendedor(const GAPInstance& inst) {
     int m = inst.getm();
     int n = inst.getn();
 
