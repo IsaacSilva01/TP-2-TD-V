@@ -15,7 +15,12 @@ GAPSolution grasp(const GAPInstance& inst, int k) {
     swap_busqueda_local(best, inst);
     relocate_busqueda_local(best, inst);
 
-    int max = 7;
+    // Cantidad máxima de iteraciones de GRASP.
+    // Se escala linealmente con la cantidad de vendedores para explorar
+    // más soluciones en instancias grandes, manteniendo un límite superior
+    // para evitar tiempos de ejecución excesivos.
+    int max = min(500, 10 * inst.getn());
+    
     int mejor = numeric_limits<int>::max();
 
     for (int it = 0; it < max; it++) {
