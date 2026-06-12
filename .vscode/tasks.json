@@ -1,28 +1,25 @@
 {
-    "tasks": [
-        {
-            "type": "cppbuild",
-            "label": "C/C++: g++ compilar archivo activo",
-            "command": "/usr/bin/g++",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "detail": "Tarea generada por el depurador."
-        }
-    ],
-    "version": "2.0.0"
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build GAP project",
+      "type": "shell",
+      "command": "make",
+      "args": [
+        "-C",
+        "tp2/src"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Compila todo el proyecto con el Makefile de tp2/src para resolver todas las dependencias."
+    }
+  ]
 }
