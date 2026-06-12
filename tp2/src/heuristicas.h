@@ -1,24 +1,10 @@
-#pragma once
-#include <iostream>
-#include <fstream>
-#include <vector>
+#pragma once // Evita que este archivo .h sea incluido más de una vez
+
 #include "instance.h"
 #include "solucion.h"
-using namespace std;
 
-class GAPheuristicas{
-public: 
-    
-    // Atributos modificables por la búsqueda local
-    vector<int> asignacion; 
-    vector<float> capacidad_residual; 
-    float costo_total;
+GAPSolution greedy_por_vendedores(const GAPInstance& inst); 
 
-    // constructor
-    GAPheuristicas(const GAPSolution& inst);
+GAPSolution greedy_por_deposito(const GAPInstance& inst);
 
-    // métodos auxiliares
-    GAPSolution greedy_por_vendedores(const GAPInstance& inst); 
-    GAPSolution greedy_por_deposito(const GAPInstance& inst);
-    GAPSolution greedy_randomizado(const GAPInstance& inst);
-};
+GAPSolution greedy_randomizado(const GAPInstance& inst, int k);
