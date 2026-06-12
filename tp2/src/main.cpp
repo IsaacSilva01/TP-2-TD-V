@@ -2,6 +2,7 @@
 #include <iostream>
 using namespace std;
 #include "instance.h"
+#include "solucion.h"
 
 
 int main(int argc, char** argv) {
