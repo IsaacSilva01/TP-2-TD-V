@@ -16,3 +16,4 @@ build/%.o: %.cpp
 
 clean:
 	rm -rf build $(EXEC)
+	rm -f *.o */*.o */*/*.o
