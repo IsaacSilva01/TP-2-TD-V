@@ -19,7 +19,7 @@ GAPSolution grasp(const GAPInstance& inst, int k) {
     // para evitar tiempos de ejecución excesivos.
     int max = min(500, 10 * inst.getn());
     
-    int mejor = numeric_limits<int>::max();
+    float mejor = numeric_limits<int>::max();
 
     for (int it = 0; it < max; it++) {
 

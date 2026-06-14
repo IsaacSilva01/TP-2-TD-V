@@ -1,4 +1,5 @@
 #include "solucion.h"
+#include <fstream>
 
 // Definición del Constructor de la clase
 GAPSolution::GAPSolution(const GAPInstance& inst) {
@@ -102,4 +103,37 @@ void GAPSolution::swap(int vendedor1, int vendedor2, const GAPInstance& inst) {
         capacidad_residual[dep1] -= inst.getdemanda(dep1, vendedor2);
         costo_total += inst.getcosto(dep1, vendedor2);
     }
+}
+
+
+void GAPSolution::escribir_solucion(const string& filename,
+                                    const GAPInstance& inst) const {
+
+    ofstream out(filename);
+
+    if (!out.is_open()) {
+        cout << "No se pudo abrir el archivo de salida: "
+             << filename << endl;
+        return;
+    }
+
+    int m = inst.getm();
+    int n = inst.getn();
+
+    for (int deposito = 0; deposito < m; deposito++) {
+
+        for (int vendedor = 0; vendedor < n; vendedor++) {
+
+            if (asignacion[vendedor] == deposito) {
+                out << vendedor << " ";
+            }
+
+        }
+
+        out << endl;
+    }
+
+    out.close();
+
+    cout << "Solucion guardada en " << filename << endl;
 }

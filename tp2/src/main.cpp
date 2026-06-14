@@ -73,6 +73,17 @@ GAPInstance leer_instancia(const string& input_file) {
     return inst;
 }
 
+string pedir_archivo_salida() {
+
+    string nombre;
+
+    cout << endl;
+    cout << "Nombre del archivo de salida (sin .txt): ";
+    cin >> nombre;
+
+    return "respuestas/" + nombre + ".txt";
+}
+
 int main() {
 
     string input_file = seleccionar_instancia();
@@ -106,8 +117,8 @@ int main() {
 
                 cout << endl;
                 cout << "Heuristicas disponibles:" << endl;
-                cout << "1. Costo minimo" << endl;
-                cout << "2. Costo + flexibilidad" << endl;
+                cout << "1. Costo mínimo (greedy por vendedores)" << endl;
+                cout << "2. Costo mínimo + flexibilidad (greedy por depósitos)" << endl;
                 cout << "Seleccione una opcion: ";
 
                 cin >> heuristica;
@@ -119,6 +130,10 @@ int main() {
 
                     GAPSolution sol = greedy_por_vendedores(inst);
 
+                    sol.escribir_solucion(
+                        pedir_archivo_salida(),
+                        inst
+                    );
                 }
                 else if (heuristica == 2) {
 
@@ -127,6 +142,10 @@ int main() {
 
                     GAPSolution sol = greedy_por_deposito(inst);
 
+                    sol.escribir_solucion(
+                        pedir_archivo_salida(),
+                        inst
+                    );
                 }
                 else {
 
@@ -144,8 +163,8 @@ int main() {
 
                 cout << endl;
                 cout << "Heuristica inicial:" << endl;
-                cout << "1. Costo mínimo por vendedores" << endl;
-                cout << "2. Costo mínimo por depósitos + flexibilidad" << endl;
+                cout << "1. Costo mínimo (greedy por vendedores)" << endl;
+                cout << "2. Costo mínimo + flexibilidad (greedy por depósitos)" << endl;
                 cin >> heuristica_inicial;
 
                 cout << endl;
@@ -171,7 +190,11 @@ int main() {
                     relocate_busqueda_local(sol_inicial, inst);
                 else
                     swap_busqueda_local(sol_inicial, inst);
-                
+
+                sol_final.escribir_solucion(
+                    pedir_archivo_salida(),
+                    inst
+                );
 
                 break;
             }
@@ -196,6 +219,11 @@ int main() {
                 cout << "Corriendo GRASP con k = " << k << "..." << endl;
 
                 GAPSolution sol = grasp(inst, k);
+
+                sol.escribir_solucion(
+                    pedir_archivo_salida(),
+                    inst
+                );
 
                 break;
             }
