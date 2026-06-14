@@ -47,8 +47,7 @@ GAPSolution greedy_por_deposito(const GAPInstance& inst) {
                 if (!solucion.es_factible_asignar(vendedor, deposito, inst)) {
                     continue;
                 }
-                    
-                // CORREGIDO: getCosto con C mayúscula
+        
                 float costo = inst.getcosto(deposito, vendedor); 
 
                 float puntaje = costo * (1.0f + 1.0f / cantidad_depositos_factibles[vendedor]);
