@@ -13,7 +13,11 @@ public:
     vector<float> capacidad_residual; 
     float costo_total;
 
-    // constructor
+    // constructor vacío
+    GAPSolution()
+        : costo_total(0.0f) {}
+
+    // constructor a partir de una instancia
     GAPSolution(const GAPInstance& inst);
 
     // métodos auxiliares
