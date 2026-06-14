@@ -40,7 +40,8 @@ GAPSolution greedy_por_deposito(const GAPInstance& inst) {
             int mejor_vendedor = -1;
 
             for (int vendedor = 0; vendedor < n; vendedor++) {
-                if (asignado[vendedor]);
+                // Si el vendedor ya fue asignado, no lo miro
+                if (asignado[vendedor]) continue;
                 
                 // chequeo que sea factible asignar el vendedor actual al depósito actual
                 if (!solucion.es_factible_asignar(vendedor, deposito, inst)) {
@@ -65,24 +66,12 @@ GAPSolution greedy_por_deposito(const GAPInstance& inst) {
         }
     }
 
-    // --- CÁLCULO DE PENALIZACIÓN ---
-    int vendedores_sin_asignar = 0;
-
+    // --- PENALIZACIÓN ---
     // vendedores no asignados → depósito ficticio (-1)
     for (int vendedor = 0; vendedor < n; vendedor++) {
         if (!asignado[vendedor]) {
-            solucion.asignar(vendedor, -1, inst); // Asignamos al ficticio de forma segura
-            vendedores_sin_asignar++;
+            solucion.asignar(vendedor, -1, inst); // Asignamos al ficticio
         }
-    }
-
-    // Si hubo vendedores infactibles que quedaron afuera, aplicamos la penalización gigante
-    if (vendedores_sin_asignar > 0) {
-        int cmax = inst.obtener_costo_maximo();
-        int penalizacion = 3.0 * cmax * vendedores_sin_asignar;
-        
-        // Si costo_total es privado, recordá cambiar esta línea por un método público de tu solución
-        solucion.costo_total += penalizacion; 
     }
 
     return solucion;
