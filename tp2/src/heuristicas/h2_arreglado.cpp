@@ -7,16 +7,15 @@
 using namespace std;
 
 GAPSolution greedy_por_deposito(const GAPInstance& inst) {
-    // CORREGIDO: Usando getM() y getN() si es que llevan mayúsculas en tu clase
     int m = inst.getm(); 
     int n = inst.getn();
 
-    // creamos el objeto solución usando su constructor en base a nuestra instancia
+    // creamos el objeto solución usando su constructor en base a la instancia
     GAPSolution solucion(inst);
 
     // vector donde marcamos los vendedores ya asignados
     vector<bool> asignado(n, false);
-
+ 
     // cantidad de depósitos factibles para cada vendedor
     vector<int> cantidad_depositos_factibles(n, 0);
     
@@ -41,13 +40,13 @@ GAPSolution greedy_por_deposito(const GAPInstance& inst) {
             int mejor_vendedor = -1;
 
             for (int vendedor = 0; vendedor < n; vendedor++) {
-                if (asignado[vendedor]) continue;
+                if (asignado[vendedor]);
                 
                 // chequeo que sea factible asignar el vendedor actual al depósito actual
                 if (!solucion.es_factible_asignar(vendedor, deposito, inst)) {
                     continue;
                 }
-
+                    
                 // CORREGIDO: getCosto con C mayúscula
                 float costo = inst.getcosto(deposito, vendedor); 
 

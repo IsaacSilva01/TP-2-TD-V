@@ -18,7 +18,7 @@ public:
     float getdemanda(int i, int j) const { return demanda[i][j]; }
     // devuelvo la capacidad del depósito i
     float getcapacidad(int i) const { return capacidad[i]; }
-    int obtener_costo_maximo();
+    int obtener_costo_maximo() const { return costo_maximo; };
 
     void read(istream& in);
     void readFromFile(const string& filename);
@@ -34,5 +34,7 @@ private:
     vector<vector<float>> demanda;   
     // capacidad[i]: capacidad total del depósito i
     vector<float> capacidad;
+
+    int costo_maximo;
     
 };

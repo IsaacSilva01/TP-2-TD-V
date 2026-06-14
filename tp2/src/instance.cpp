@@ -29,6 +29,16 @@ void GAPInstance::read(istream& in){
             cout << "Error leyendo capacidad del deposito " << i << endl; 
         }
     }
+
+    int cmax = 0;
+
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            if (getcosto(i, j) > cmax) { 
+                cmax = getcosto(i, j);
+            }
+        }
+    }
 }  
 
 void GAPInstance::readFromFile(const string& filename) {
@@ -39,19 +49,4 @@ void GAPInstance::readFromFile(const string& filename) {
     }
     read(f);
     f.close();
-}
-
-int GAPInstance::obtener_costo_maximo() {
-    int cmax = 0;
-    int m = getm(); 
-    int n = getn(); 
-
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            if (getcosto(i, j) > cmax) { 
-                cmax = getcosto(i, j);
-            }
-        }
-    }
-    return cmax;
 }
