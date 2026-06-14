@@ -8,3 +8,5 @@ GAPSolution greedy_por_vendedores(const GAPInstance& inst);
 GAPSolution greedy_por_deposito(const GAPInstance& inst);
 
 GAPSolution greedy_randomizado(const GAPInstance& inst, int k);
+
+GAPSolution grasp(const GAPInstance& inst, int k);
