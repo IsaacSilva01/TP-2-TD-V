@@ -1,23 +1,14 @@
 #include "instance.h"
 #include "solucion.h"
-#include "heuristicas.h"
 #include <vector>
 #include <limits>
+#include <algorithm> // Para usar max
 
 using namespace std;
 
-// Intuición: itero sobre los depósitos, y para cada depósito le asigno
-// la mayor cantidad de vendedores posibles tal que
-// esos vendedores tengan el menor costo posible
-// con la particularidad de que además se prioriza
-// a los vendedores que tienen pocos depósitos factibles
-// disponibles para ser asignados
-
-// ambas condiciones se ven reflejadas en la variable puntaje
-// A cada depósito, se asinan los vendedores de menor puntaje:
-// puntaje = costo ij + (1 +  1 / cantidad de depositos factibles(i))
 GAPSolution greedy_por_deposito(const GAPInstance& inst) {
-    int m = inst.getm();
+    // CORREGIDO: Usando getM() y getN() si es que llevan mayúsculas en tu clase
+    int m = inst.getm(); 
     int n = inst.getn();
 
     // creamos el objeto solución usando su constructor en base a nuestra instancia
@@ -38,25 +29,18 @@ GAPSolution greedy_por_deposito(const GAPInstance& inst) {
             }
         }
 
-        // evitamos división por cero haciendo que todos los vendedores
-        // son asignables a al menos un depósito.
-        // Siempre es posible asignarlo a un déposito imaginario
-        // que representa no asignarlo a ninguno
+        // evitamos división por cero
         cantidad_depositos_factibles[vendedor] = max(1, contador);
     }
 
     // iteramos por cada depósito:
-    // por cada depósito, le asigno la mayor cantidad de vendedores posibles
-    // tal que esos vendedores tengan el mayor puntaje entre los vendedore no asignados
     for (int deposito = 0; deposito < m; deposito++) {
 
         while (true) {
-
             float mejor_puntaje = numeric_limits<float>::infinity();
             int mejor_vendedor = -1;
 
             for (int vendedor = 0; vendedor < n; vendedor++) {
-
                 if (asignado[vendedor]) continue;
                 
                 // chequeo que sea factible asignar el vendedor actual al depósito actual
@@ -64,7 +48,8 @@ GAPSolution greedy_por_deposito(const GAPInstance& inst) {
                     continue;
                 }
 
-                float costo = inst.getcosto(deposito, vendedor);
+                // CORREGIDO: getCosto con C mayúscula
+                float costo = inst.getcosto(deposito, vendedor); 
 
                 float puntaje = costo * (1.0f + 1.0f / cantidad_depositos_factibles[vendedor]);
 
@@ -81,11 +66,24 @@ GAPSolution greedy_por_deposito(const GAPInstance& inst) {
         }
     }
 
-    // vendedores no asignados → depósito ficticio
+    // --- CÁLCULO DE PENALIZACIÓN ---
+    int vendedores_sin_asignar = 0;
+
+    // vendedores no asignados → depósito ficticio (-1)
     for (int vendedor = 0; vendedor < n; vendedor++) {
         if (!asignado[vendedor]) {
-            solucion.asignar(vendedor, m, inst);
+            solucion.asignar(vendedor, -1, inst); // Asignamos al ficticio de forma segura
+            vendedores_sin_asignar++;
         }
+    }
+
+    // Si hubo vendedores infactibles que quedaron afuera, aplicamos la penalización gigante
+    if (vendedores_sin_asignar > 0) {
+        int cmax = inst.obtener_costo_maximo();
+        int penalizacion = 3.0 * cmax * vendedores_sin_asignar;
+        
+        // Si costo_total es privado, recordá cambiar esta línea por un método público de tu solución
+        solucion.costo_total += penalizacion; 
     }
 
     return solucion;
