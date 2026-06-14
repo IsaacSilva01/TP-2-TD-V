@@ -39,6 +39,8 @@ void GAPInstance::read(istream& in){
             }
         }
     }
+
+    costo_maximo = cmax;
 }  
 
 void GAPInstance::readFromFile(const string& filename) {

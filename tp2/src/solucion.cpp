@@ -38,21 +38,43 @@ void GAPSolution::asignar(int vendedor, int deposito, const GAPInstance& inst) {
     }
 }
 
-void GAPSolution::relocate(int vendedor, int deposito, const GAPInstance& inst){
-    if ( asignacion[vendedor]!=deposito && es_factible_asignar(vendedor, deposito, inst)){ 
-        int deposito_anterior = asignacion[vendedor];
-        asignacion[vendedor]= deposito;
-       
-        if (deposito_anterior != -1) { // si no estaba asignado a ningún depósito
-            if (deposito != -1){ 
-                capacidad_residual[deposito] -= inst.getdemanda(deposito, vendedor);
+void GAPSolution::relocate(int vendedor, int deposito_nuevo,
+                           const GAPInstance& inst) {
 
-                costo_total += inst.getcosto(deposito, vendedor);
-            }
-            capacidad_residual[deposito_anterior] += inst.getdemanda(deposito_anterior, vendedor); // al deposito anterior le sumo la capacidad que el vendedor le restaba
-            
-            costo_total -= inst.getcosto(deposito_anterior, vendedor); // ya no tengo en cuenta el costo del vendedor con el deposito anterior para calcular el costo total
-        }
+    int deposito_anterior = asignacion[vendedor];
+
+    if (deposito_anterior == deposito_nuevo) return;
+
+    if (!es_factible_asignar(vendedor, deposito_nuevo, inst))
+        return;
+
+    // --- DESHACER LA ASIGNACIÓN ANTERIOR ---
+
+    if (deposito_anterior == -1) {
+        // estaba penalizado
+        costo_total -= 3.0 * inst.getcosto_maximo();
+    }
+    else {
+        capacidad_residual[deposito_anterior] +=
+            inst.getdemanda(deposito_anterior, vendedor);
+
+        costo_total -=
+            inst.getcosto(deposito_anterior, vendedor);
+    }
+
+    // --- APLICAR LA NUEVA ASIGNACIÓN ---
+
+    asignacion[vendedor] = deposito_nuevo;
+
+    if (deposito_nuevo == -1) {
+        costo_total += 3.0 * inst.getcosto_maximo();
+    }
+    else {
+        capacidad_residual[deposito_nuevo] -=
+            inst.getdemanda(deposito_nuevo, vendedor);
+
+        costo_total +=
+            inst.getcosto(deposito_nuevo, vendedor);
     }
 }
 
@@ -67,13 +89,13 @@ void GAPSolution::swap(int vendedor1, int vendedor2, const GAPInstance& inst) {
 
     // Si dep1 no es el ficticio, verificamos que el vendedor2 entre al liberar al vendedor1
     if (dep1 != -1) {
-        int espacio_neto_dep1 = capacidad_residual[dep1] + inst.getdemanda(dep1, vendedor1) - inst.getdemanda(dep1, vendedor2);
+        float espacio_neto_dep1 = capacidad_residual[dep1] + inst.getdemanda(dep1, vendedor1) - inst.getdemanda(dep1, vendedor2);
         if (espacio_neto_dep1 < 0) return; // No hay capacidad suficiente en dep1
     }
 
     // Si dep2 no es el ficticio, verificamos que el vendedor1 entre al liberar al vendedor2
     if (dep2 != -1) {
-        int espacio_neto_dep2 = capacidad_residual[dep2] + inst.getdemanda(dep2, vendedor2) - inst.getdemanda(dep2, vendedor1);
+        float espacio_neto_dep2 = capacidad_residual[dep2] + inst.getdemanda(dep2, vendedor2) - inst.getdemanda(dep2, vendedor1);
         if (espacio_neto_dep2 < 0) return; // No hay capacidad suficiente en dep2
     }
 

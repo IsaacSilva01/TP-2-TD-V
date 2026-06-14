@@ -11,7 +11,7 @@ using namespace std;
 
 GAPSolution grasp(const GAPInstance& inst, int k) {
     
-    GAPSolution res = GAPSolution();
+    GAPSolution res;
 
     // Cantidad máxima de iteraciones de GRASP.
     // Se escala linealmente con la cantidad de vendedores para explorar
@@ -30,7 +30,7 @@ GAPSolution grasp(const GAPInstance& inst, int k) {
 
         if (s.costo_total < mejor) {
             mejor = s.costo_total;
-            GAPSolution res = s;
+            res = s;
         }
     }
 

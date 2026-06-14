@@ -119,6 +119,7 @@ int main() {
                 cout << "Heuristicas disponibles:" << endl;
                 cout << "1. Costo mínimo (greedy por vendedores)" << endl;
                 cout << "2. Costo mínimo + flexibilidad (greedy por depósitos)" << endl;
+                cout << "3. Greedy aleatorizado (top-k random)" << endl;
                 cout << "Seleccione una opcion: ";
 
                 cin >> heuristica;
@@ -147,6 +148,31 @@ int main() {
                         inst
                     );
                 }
+                else if (heuristica == 3) {
+
+                    int k;
+
+                    cout << endl;
+                    cout << "Ingrese el valor de k: ";
+                    cin >> k;
+
+                    if (k <= 0 || k > inst.getm()) {
+                        cout << "k debe estar entre 1 y "
+                             << inst.getm() << endl;
+                        break;
+                    }
+
+                    cout << endl;
+                    cout << "Ejecutando greedy aleatorizado con k = "
+                         << k << "..." << endl;
+
+                    GAPSolution sol = greedy_randomizado(inst, k);
+
+                    sol.escribir_solucion(
+                        pedir_archivo_salida(),
+                        inst
+                    );
+                }
                 else {
 
                     cout << "Opcion invalida." << endl;
@@ -165,6 +191,7 @@ int main() {
                 cout << "Heuristica inicial:" << endl;
                 cout << "1. Costo mínimo (greedy por vendedores)" << endl;
                 cout << "2. Costo mínimo + flexibilidad (greedy por depósitos)" << endl;
+                cout << "3. Greedy aleatorizado (top-k random)" << endl;
                 cin >> heuristica_inicial;
 
                 cout << endl;
@@ -179,19 +206,38 @@ int main() {
                 
                 GAPSolution sol_inicial;
 
-                if (heuristica_inicial == 1)
+                if (heuristica_inicial == 1) {
                     sol_inicial = greedy_por_vendedores(inst);
-                else
+                }
+                else if (heuristica_inicial == 2) {
                     sol_inicial = greedy_por_deposito(inst);
+                }
+                else if (heuristica_inicial == 3) {
+                    int k;
 
-                GAPSolution sol_final;
+                    cout << endl;
+                    cout << "Ingrese el valor de k: ";
+                    cin >> k;
+
+                    if (k <= 0 || k > inst.getm()) {
+                        cout << "k debe estar entre 1 y "
+                             << inst.getm() << endl;
+                        break;
+                    }
+
+                    sol_inicial = greedy_randomizado(inst, k);
+                }
+                else {
+                    cout << "Opcion invalida." << endl;
+                    break;
+                }
 
                 if (operador == 1)
                     relocate_busqueda_local(sol_inicial, inst);
                 else
                     swap_busqueda_local(sol_inicial, inst);
 
-                sol_final.escribir_solucion(
+                sol_inicial.escribir_solucion(
                     pedir_archivo_salida(),
                     inst
                 );
