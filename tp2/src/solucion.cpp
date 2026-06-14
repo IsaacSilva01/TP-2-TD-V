@@ -33,6 +33,7 @@ void GAPSolution::asignar(int vendedor, int deposito, const GAPInstance& inst) {
     else{
         // va al depósito ficticio (deposito ficticio = -1): se queda en -1 y no altera costos ni capacidades reales
         asignacion[vendedor] = -1;
+        costo_total += inst.getcosto_maximo()*3.0;
     }
 }
 
