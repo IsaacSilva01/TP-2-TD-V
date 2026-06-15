@@ -1,6 +1,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <chrono>
+#include <iomanip>
 
 using namespace std;
 
@@ -11,7 +13,17 @@ using namespace std;
 
 
 
-string seleccionar_instancia() {
+using chrono::high_resolution_clock;
+using chrono::duration;
+using chrono::duration_cast;
+using chrono::milliseconds;
+
+struct InstanciaSeleccionada {
+    string nombre_corto;
+    string ruta;
+};
+
+InstanciaSeleccionada seleccionar_instancia() {
 
     vector<pair<string,string>> instancias = {
 
@@ -62,7 +74,32 @@ string seleccionar_instancia() {
     cout << "Seleccione una instancia: ";
     cin >> opcion;
 
-    return instancias[opcion - 1].second;
+    return {instancias[opcion - 1].first, instancias[opcion - 1].second};
+}
+
+void imprimir_resultado(const string& nombre_instancia,
+                        const string& nombre_metodo,
+                        float costo_total,
+                        double tiempo_ms) {
+    cout << fixed << setprecision(2);
+    cout << "Instancia: " << nombre_instancia << endl;
+    cout << "Metodo: " << nombre_metodo << endl;
+    cout << "Costo total: " << costo_total << endl;
+    cout << "Tiempo: " << tiempo_ms << " ms" << endl;
+    cout << "----------------------------------" << endl;
+}
+
+string nombre_heuristica(int opcion) {
+    switch (opcion) {
+        case 1: return "Costo mínimo (greedy por vendedores)";
+        case 2: return "Costo mínimo + flexibilidad (greedy por depósitos)";
+        case 3: return "Greedy aleatorizado (top-k random)";
+        default: return "Heuristica";
+    }
+}
+
+string nombre_busqueda_local(int opcion) {
+    return opcion == 1 ? "Relocate" : "Swap";
 }
 
 GAPInstance leer_instancia(const string& input_file) {
@@ -86,7 +123,9 @@ string pedir_archivo_salida() {
 
 int main() {
 
-    string input_file = seleccionar_instancia();
+    InstanciaSeleccionada seleccion = seleccionar_instancia();
+    string input_file = seleccion.ruta;
+    string nombre_instancia = seleccion.nombre_corto;
     GAPInstance inst = leer_instancia(input_file);
 
     bool seguir = true;
@@ -129,7 +168,13 @@ int main() {
                     cout << endl;
                     cout << "Ejecutando heuristica costo minimo..." << endl;
 
+                    auto inicio = high_resolution_clock::now();
                     GAPSolution sol = greedy_por_vendedores(inst);
+                    auto fin = high_resolution_clock::now();
+
+                    double tiempo_ms = duration<double, milli>(fin - inicio).count();
+
+                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica), sol.costo_total, tiempo_ms);
 
                     sol.escribir_solucion(
                         pedir_archivo_salida(),
@@ -141,7 +186,13 @@ int main() {
                     cout << endl;
                     cout << "Ejecutando heuristica costo + flexibilidad..." << endl;
 
+                    auto inicio = high_resolution_clock::now();
                     GAPSolution sol = greedy_por_deposito(inst);
+                    auto fin = high_resolution_clock::now();
+
+                    double tiempo_ms = duration<double, milli>(fin - inicio).count();
+
+                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica), sol.costo_total, tiempo_ms);
 
                     sol.escribir_solucion(
                         pedir_archivo_salida(),
@@ -166,7 +217,13 @@ int main() {
                     cout << "Ejecutando greedy aleatorizado con k = "
                          << k << "..." << endl;
 
+                    auto inicio = high_resolution_clock::now();
                     GAPSolution sol = greedy_randomizado(inst, k);
+                    auto fin = high_resolution_clock::now();
+
+                    double tiempo_ms = duration<double, milli>(fin - inicio).count();
+
+                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica) + " (k=" + to_string(k) + ")", sol.costo_total, tiempo_ms);
 
                     sol.escribir_solucion(
                         pedir_archivo_salida(),
@@ -205,12 +262,21 @@ int main() {
 
                 
                 GAPSolution sol_inicial;
+                string nombre_metodo = nombre_heuristica(heuristica_inicial) + " + " + nombre_busqueda_local(operador);
+                double tiempo_heuristica_ms = 0.0;
+                double tiempo_busqueda_ms = 0.0;
 
                 if (heuristica_inicial == 1) {
+                    auto inicio_heuristica = high_resolution_clock::now();
                     sol_inicial = greedy_por_vendedores(inst);
+                    auto fin_heuristica = high_resolution_clock::now();
+                    tiempo_heuristica_ms = duration<double, milli>(fin_heuristica - inicio_heuristica).count();
                 }
                 else if (heuristica_inicial == 2) {
+                    auto inicio_heuristica = high_resolution_clock::now();
                     sol_inicial = greedy_por_deposito(inst);
+                    auto fin_heuristica = high_resolution_clock::now();
+                    tiempo_heuristica_ms = duration<double, milli>(fin_heuristica - inicio_heuristica).count();
                 }
                 else if (heuristica_inicial == 3) {
                     int k;
@@ -225,17 +291,33 @@ int main() {
                         break;
                     }
 
+                    auto inicio_heuristica = high_resolution_clock::now();
                     sol_inicial = greedy_randomizado(inst, k);
+                    auto fin_heuristica = high_resolution_clock::now();
+                    tiempo_heuristica_ms = duration<double, milli>(fin_heuristica - inicio_heuristica).count();
                 }
                 else {
                     cout << "Opcion invalida." << endl;
                     break;
                 }
 
+                auto inicio_busqueda = high_resolution_clock::now();
                 if (operador == 1)
                     relocate_busqueda_local(sol_inicial, inst);
                 else
                     swap_busqueda_local(sol_inicial, inst);
+                auto fin_busqueda = high_resolution_clock::now();
+                tiempo_busqueda_ms = duration<double, milli>(fin_busqueda - inicio_busqueda).count();
+
+                double tiempo_total_ms = tiempo_heuristica_ms + tiempo_busqueda_ms;
+
+                cout << endl;
+                cout << "Tiempo: " << fixed << setprecision(2) << tiempo_heuristica_ms
+                     << " ms (" << nombre_heuristica(heuristica_inicial) << ") + "
+                     << tiempo_busqueda_ms << " ms (" << nombre_busqueda_local(operador) << ") = "
+                     << tiempo_total_ms << " ms" << endl;
+
+                imprimir_resultado(nombre_instancia, nombre_metodo, sol_inicial.costo_total, tiempo_total_ms);
 
                 sol_inicial.escribir_solucion(
                     pedir_archivo_salida(),
@@ -264,7 +346,13 @@ int main() {
 
                 cout << "Corriendo GRASP con k = " << k << "..." << endl;
 
+                auto inicio = high_resolution_clock::now();
                 GAPSolution sol = grasp(inst, k);
+                auto fin = high_resolution_clock::now();
+
+                double tiempo_ms = duration<double, milli>(fin - inicio).count();
+
+                imprimir_resultado(nombre_instancia, "GRASP(k=" + to_string(k) + ")", sol.costo_total, tiempo_ms);
 
                 sol.escribir_solucion(
                     pedir_archivo_salida(),
@@ -276,7 +364,9 @@ int main() {
             
             case 4: {
 
-                input_file = seleccionar_instancia();
+                seleccion = seleccionar_instancia();
+                input_file = seleccion.ruta;
+                nombre_instancia = seleccion.nombre_corto;
                 inst = leer_instancia(input_file);
 
                 break;
