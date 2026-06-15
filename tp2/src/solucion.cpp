@@ -26,16 +26,11 @@ void GAPSolution::asignar(int vendedor, int deposito, const GAPInstance& inst) {
     // asigna el depósito al vendedor
     asignacion[vendedor] = deposito;
 
-    // si no es el depósito ficticio que nos creamos, le restamos la capacidad y sumamos el costo
     if (deposito != -1) {
         capacidad_residual[deposito] -= inst.getdemanda(deposito, vendedor);
-        costo_total += inst.getcosto(deposito, vendedor);
-}   
-    else{
-        // va al depósito ficticio (deposito ficticio = -1): se queda en -1 y no altera costos ni capacidades reales
-        asignacion[vendedor] = -1;
-        costo_total += inst.getcosto_maximo()*3.0;
     }
+
+    costo_total += inst.getcosto(deposito, vendedor);
 }
 
 void GAPSolution::relocate(int vendedor, int deposito_nuevo,
@@ -49,33 +44,19 @@ void GAPSolution::relocate(int vendedor, int deposito_nuevo,
         return;
 
     // --- DESHACER LA ASIGNACIÓN ANTERIOR ---
-
-    if (deposito_anterior == -1) {
-        // estaba penalizado
-        costo_total -= 3.0 * inst.getcosto_maximo();
-    }
-    else {
+    if (deposito_anterior != -1) {
         capacidad_residual[deposito_anterior] +=
             inst.getdemanda(deposito_anterior, vendedor);
-
-        costo_total -=
-            inst.getcosto(deposito_anterior, vendedor);
     }
+    costo_total -= inst.getcosto(deposito_anterior, vendedor);
 
     // --- APLICAR LA NUEVA ASIGNACIÓN ---
-
     asignacion[vendedor] = deposito_nuevo;
-
-    if (deposito_nuevo == -1) {
-        costo_total += 3.0 * inst.getcosto_maximo();
-    }
-    else {
+    if (deposito_nuevo != -1) {
         capacidad_residual[deposito_nuevo] -=
             inst.getdemanda(deposito_nuevo, vendedor);
-
-        costo_total +=
-            inst.getcosto(deposito_nuevo, vendedor);
     }
+    costo_total += inst.getcosto(deposito_nuevo, vendedor);
 }
 
 void GAPSolution::swap(int vendedor1, int vendedor2, const GAPInstance& inst) {
