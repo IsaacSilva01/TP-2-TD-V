@@ -77,14 +77,26 @@ InstanciaSeleccionada seleccionar_instancia() {
     return {instancias[opcion - 1].first, instancias[opcion - 1].second};
 }
 
+int contar_deposito_ficticio(const GAPSolution& sol) {
+    int cantidad = 0;
+    for (int vendedor = 0; vendedor < (int)sol.asignacion.size(); ++vendedor) {
+        if (sol.asignacion[vendedor] == -1) {
+            ++cantidad;
+        }
+    }
+    return cantidad;
+}
+
 void imprimir_resultado(const string& nombre_instancia,
                         const string& nombre_metodo,
                         float costo_total,
-                        double tiempo_ms) {
+                        double tiempo_ms,
+                        int vendedores_ficticios) {
     cout << fixed << setprecision(2);
     cout << "Instancia: " << nombre_instancia << endl;
     cout << "Metodo: " << nombre_metodo << endl;
     cout << "Costo total: " << costo_total << endl;
+    cout << "Vendedores asignados a deposito -1: " << vendedores_ficticios << endl;
     cout << "Tiempo: " << tiempo_ms << " ms" << endl;
     cout << "----------------------------------" << endl;
 }
@@ -173,8 +185,9 @@ int main() {
                     auto fin = high_resolution_clock::now();
 
                     double tiempo_ms = duration<double, milli>(fin - inicio).count();
+                    int vendedores_ficticios = contar_deposito_ficticio(sol);
 
-                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica), sol.costo_total, tiempo_ms);
+                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica), sol.costo_total, tiempo_ms, vendedores_ficticios);
 
                     sol.escribir_solucion(
                         pedir_archivo_salida(),
@@ -191,8 +204,9 @@ int main() {
                     auto fin = high_resolution_clock::now();
 
                     double tiempo_ms = duration<double, milli>(fin - inicio).count();
+                    int vendedores_ficticios = contar_deposito_ficticio(sol);
 
-                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica), sol.costo_total, tiempo_ms);
+                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica), sol.costo_total, tiempo_ms, vendedores_ficticios);
 
                     sol.escribir_solucion(
                         pedir_archivo_salida(),
@@ -222,8 +236,9 @@ int main() {
                     auto fin = high_resolution_clock::now();
 
                     double tiempo_ms = duration<double, milli>(fin - inicio).count();
+                    int vendedores_ficticios = contar_deposito_ficticio(sol);
 
-                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica) + " (k=" + to_string(k) + ")", sol.costo_total, tiempo_ms);
+                    imprimir_resultado(nombre_instancia, nombre_heuristica(heuristica) + " (k=" + to_string(k) + ")", sol.costo_total, tiempo_ms, vendedores_ficticios);
 
                     sol.escribir_solucion(
                         pedir_archivo_salida(),
@@ -317,7 +332,8 @@ int main() {
                      << tiempo_busqueda_ms << " ms (" << nombre_busqueda_local(operador) << ") = "
                      << tiempo_total_ms << " ms" << endl;
 
-                imprimir_resultado(nombre_instancia, nombre_metodo, sol_inicial.costo_total, tiempo_total_ms);
+                int vendedores_ficticios = contar_deposito_ficticio(sol_inicial);
+                imprimir_resultado(nombre_instancia, nombre_metodo, sol_inicial.costo_total, tiempo_total_ms, vendedores_ficticios);
 
                 sol_inicial.escribir_solucion(
                     pedir_archivo_salida(),
@@ -351,8 +367,9 @@ int main() {
                 auto fin = high_resolution_clock::now();
 
                 double tiempo_ms = duration<double, milli>(fin - inicio).count();
+                int vendedores_ficticios = contar_deposito_ficticio(sol);
 
-                imprimir_resultado(nombre_instancia, "GRASP(k=" + to_string(k) + ")", sol.costo_total, tiempo_ms);
+                imprimir_resultado(nombre_instancia, "GRASP(k=" + to_string(k) + ")", sol.costo_total, tiempo_ms, vendedores_ficticios);
 
                 sol.escribir_solucion(
                     pedir_archivo_salida(),
