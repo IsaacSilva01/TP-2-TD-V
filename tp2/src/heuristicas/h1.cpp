@@ -38,8 +38,8 @@ GAPSolution greedy_por_vendedores(const GAPInstance& inst) {
             sol.asignar(j, mejor_dep, inst);
         } else {
             // si no encontramos ningún depósito real, lo asignamos 
-            // al depósito ficticio (índice m). O sea que se quedará con valor -1
-            sol.asignar(j, m, inst);
+            // al depósito ficticio (-1). O sea que se quedará con valor -1
+            sol.asignar(j, -1, inst);
         }
     }
 

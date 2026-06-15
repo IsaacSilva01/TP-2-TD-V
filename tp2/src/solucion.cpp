@@ -155,14 +155,6 @@ void GAPSolution::escribir_solucion(const string& filename,
         out << endl;
     }
 
-    for (int vendedor = 0; vendedor < n; vendedor++) {
-        if (asignacion[vendedor] == -1) {
-            out << vendedor << " ";
-        }
-    }
-
-    out << endl;
-
     out.close();
 
     cout << "Solucion guardada en " << filename << endl;
