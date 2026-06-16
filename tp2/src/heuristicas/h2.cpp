@@ -50,7 +50,9 @@ GAPSolution greedy_por_deposito(const GAPInstance& inst) {
         
                 float costo = inst.getcosto(deposito, vendedor); 
 
-                float puntaje = costo * (1.0f + 1.0f / cantidad_depositos_factibles[vendedor]);
+                float prioridad =  1.0f / (1.0f + cantidad_depositos_factibles[vendedor]);
+
+                float puntaje = costo - prioridad;
 
                 if (puntaje < mejor_puntaje) {
                     mejor_puntaje = puntaje;
